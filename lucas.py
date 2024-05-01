@@ -4,45 +4,52 @@ from rabin_miller import mod_pow
 
 
 def prime_factors(n):
+    """Знаходить всі прості фактори числа n."""
     factors = []
-    # Check for number of 2s that divide n
+    # Перевіряємо, скільки разів число n ділиться на 2
     if n % 2 == 0:
         factors.append(2)
     while n % 2 == 0:
-        n //= 2
-    # n must be odd at this point, thus a skip of 2 (i.e., i = i + 2) can be used
+        n //= 2  # Ділимо n на 2 поки воно парне
+
+    # Після видалення всіх множників 2, n має бути непарним
+    # Тому можна перевіряти дільники з кроком 2 (тільки непарні числа)
     for i in range(3, int(math.sqrt(n)) + 1, 2):
-        # While i divides n, append i and divide n
-        if n % i == 0:
-            factors.append(i)
         while n % i == 0:
-            n //= i
+            if i not in factors:
+                factors.append(i)  # Додаємо i до списку факторів, якщо воно ділить n
+            n //= i  # Ділимо n на i доки воно ділиться націло
+
+    # Якщо після обробки залишається число більше за 2, воно також простий фактор
     if n > 2:
         factors.append(n)
     return factors
 
 
 def lucas_test(n):
+    """Перевіряє, чи є число n простим за допомогою тесту Лукаса."""
     if n == 1:
-        return False
+        return False  # 1 не є простим числом
     if n == 2:
-        return True
+        return True  # 2 є простим числом
     if n % 2 == 0:
-        return False
+        return False  # Парні числа більше за 2 не можуть бути простими
 
-    # фактори n-1
+    # Знаходимо прості фактори n-1 для подальшого тестування
     factors = prime_factors(n - 1)
-    trial_count = 10  # к-ть спроб тесту
+    trial_count = 10  # Кількість спроб тесту
 
+    # Проводимо тест Лукаса задану кількість разів
     for _ in range(trial_count):
         a = random.randint(2, n - 2)
         if mod_pow(a, n - 1, n) != 1:
-            return False  # n не просте число
+            return False  # Якщо a^(n-1) % n != 1, то n не є простим
         flag = True
         for factor in factors:
             if mod_pow(a, (n - 1) // factor, n) == 1:
                 flag = False
                 break
         if flag:
-            return True  # n імовірно просте число
-    return False  # n не просте, якщо не пройшло жоден тест
+            return True  # Якщо умови виконуються для всіх факторів, n ймовірно просте
+
+    return False  # Якщо жоден тест не підтвердив простоту, n не є простим
