@@ -60,7 +60,7 @@ def baillie_test(num):
         return False
     if not isPrimeRM(num, 2):
         return False  # Використовуємо тест Міллера-Рабіна для подальшої перевірки
-    if not lucas_test(num):  # Перевірка за допомогою тесту Лукаса (функція не наведена у вашому коді)
+    if not lucas_test(num):
         return False
     return True  # Якщо всі тести пройдено, num ймовірно просте
 
